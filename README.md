@@ -33,7 +33,7 @@ $ awk '{{print length($0);}}' output_directory/8mers_contigs.txt > output_direct
 
 #### Repeat for 9, 10, and 11mers
 
-[prep predictions](#prepare-predictions)
+
 ## Prepare predictions
 
 First, get list of all HLA available for prediction in NetMHCpan
