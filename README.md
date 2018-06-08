@@ -3,13 +3,16 @@ Scripts relevant to Self-immunopeptidome and Cancer manuscript
 
 
 ## Environment
-* Python v3.4.5
+* Python v3.4.5 (and python_requirements.txt)
 * Samtools v0.1.8
 * sqlite3 v3.6.20
 * NetMHCpan v3.0
 
 ## Tasks described here
+* [Condensing proteomes](#procedure-to-condense-a-proteome)
 * [Prepare predictions](#prepare-predictions)
+* [Generating random amino acid changes](#generating-random-proteome-mutations)
+* [Getting variant RNA-seq support](#getting-variant-rna-seq-read-support)
 
 ## Procedure to condense a proteome
 This will condense a given proteome (.fasta(s)) into sets of artificial proteins ("contigs")
@@ -41,10 +44,11 @@ First, get list of all HLA available for prediction in NetMHCpan
 $ /path/to/netMHCpan-3.0/netMHCpan -listMHC | awk '{print $1}' | grep -e "HLA-[ABC]" > allHLAI.txt
 ```
 
-Note, this was designed to create input files for [clusterTAS](https://github.com/scottdbrown/bcgsc-scripts/blob/master/clusterTAS) cluster submission and management script locally at the BC Genome Sciences Centre. This will likely need modification to run on your system. Format of scripts.sh is "job_name \t bash command"
+Note, this was designed to create input files for [clusterTAS](https://github.com/scottdbrown/bcgsc-scripts/blob/master/clusterTAS) cluster submission and management script locally at the BC Genome Sciences Centre. This will likely need modification to run on your system. Format of each line of scripts.sh is `job_name bash command`.
+
 Prepare NetMHCpan invocations using the condensed proteomes. First edit lines 22-24 to paths on your system. Then run as:
 ```bash
-$ python prepareJobs.py --species SPECIES_NAME --contig8mer output_directory/8mers_contigs.txt --contig9mer .output_directory/8mers_contigs.txt --contig9mer output_directory/10mers_contigs.txt --contig11mer output_directory/11mers_contigs.txt --contigsPerJob 1000 --hlaAlleleList allHLAI.txt --destDir /path/to/output/jobs_dir/
+$ python prepareJobs.py --species HUMAN --contig8mer output_directory/8mers_contigs.txt --contig9mer .output_directory/8mers_contigs.txt --contig9mer output_directory/10mers_contigs.txt --contig11mer output_directory/11mers_contigs.txt --contigsPerJob 1000 --hlaAlleleList allHLAI.txt --destDir /path/to/output/jobs_dir/
 ```
 This breaks the input into many smaller individual jobs, depending on the proteome size.
 Example of one line of the scripts.sh file is:
@@ -61,8 +65,9 @@ Make sure that failedJobs.txt is an empty file before continuing.
 
 Now we will build an sqlite3 (v3.6.20) database to hold information on pMHC binding.
 ```bash
-$ python makeDatabaseOfBinders.py SPECIES_NAME /path/to/results/ allHLAI.txt SPECIES_NAME_binders.db 16
+$ python makeDatabaseOfBinders.py HUMAN /path/to/results/ allHLAI.txt HUMAN_binders.db 16
 ```
+Note: Database holds all peptides and hla, but only pMHC interactions (binders) with IC50 < 500 nM.
 
 Details on the schema of the created database:
 ```bash
@@ -85,12 +90,17 @@ CREATE TABLE binders(hla_id INT, pep_id INT, ic50 REAL);
 CREATE INDEX binder_hla_ind ON binders(hla_id);
 CREATE INDEX binder_pep_ind ON binders(pep_id);
 ```
+Note that indices need to be created manually after running `makeDatabaseOfBinders.py`.
 
-Given a list of HLA genotypes, we can calculate the size of the self-immunopeptidome (where samples_hlaGeno.tsv is like "sample_id \t HLA-A02-01_HLA-A28-01_HLA-B57-01_HLA-B27-05_HLA-C03-03_HLA-C03-03\n")
+Given a list of HLA genotypes, we can calculate the size of the self-immunopeptidome
 ```bash
 $ python lookupHLAgenotypesSQL.py samples_hlaGeno.tsv HUMAN_binders.db output_selfimmunopeptidome_sizes.tsv 12
 ```
-
+Where samples_hlaGeno.tsv is like:
+```
+sample_id HLA-A02-01_HLA-A28-01_HLA-B57-01_HLA-B27-05_HLA-C03-03_HLA-C03-03
+...
+```
 
 ## Generating Random Proteome Mutations
 
