@@ -9,7 +9,7 @@ Scripts relevant to Self-immunopeptidome and Cancer manuscript
 * NetMHCpan v3.0
 
 ## Tasks described here
-* [Prepare predictions](Prepare predictions)
+* [Prepare predictions](#prepare-predictions)
 
 ## Procedure to condense a proteome
 This will condense a given proteome (.fasta(s)) into sets of artificial proteins ("contigs")
@@ -34,7 +34,7 @@ $ awk '{{print length($0);}}' output_directory/8mers_contigs.txt > output_direct
 #### Repeat for 9, 10, and 11mers
 
 
-## Prepare predictions(Prepare predictions)
+## Prepare predictions(#prepare-predictions)
 
 First, get list of all HLA available for prediction in NetMHCpan
 ```bash
