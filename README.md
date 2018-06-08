@@ -4,14 +4,18 @@ Scripts relevant to Self-immunopeptidome and Cancer manuscript
 
 ## Environment
 * Python v3.4.5
+* Samtools v0.1.8
+* sqlite3 v3.6.20
+* NetMHCpan v3.0
 
-
+## Tasks described here
+* [Prepare predictions](Prepare predictions)
 
 ## Procedure to condense a proteome
 This will condense a given proteome (.fasta(s)) into sets of artificial proteins ("contigs")
 
 
-####8mers:
+#### 8mers:
 Extract all unique n-mers from the proteome file(s)
 ```bash
 $ python processUniqueNmersProteome.py output_directory/8mers.txt -n 8 --fasta proteome_file1.fasta [proteome_file2.fasta ...]
@@ -27,10 +31,10 @@ Record lengths of the resulting contigs
 $ awk '{{print length($0);}}' output_directory/8mers_contigs.txt > output_directory/8mers_lengths.txt
 ```
 
-####Repeat for 9, 10, and 11mers
+#### Repeat for 9, 10, and 11mers
 
 
-## Prepare predictions
+## Prepare predictions(Prepare predictions)
 
 First, get list of all HLA available for prediction in NetMHCpan
 ```bash
