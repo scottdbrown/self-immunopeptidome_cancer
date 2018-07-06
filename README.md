@@ -44,7 +44,7 @@ First, get list of all HLA available for prediction in NetMHCpan
 $ /path/to/netMHCpan-3.0/netMHCpan -listMHC | awk '{print $1}' | grep -e "HLA-[ABC]" > allHLAI.txt
 ```
 
-Note, this was designed to create input files for [clusterTAS](https://github.com/scottdbrown/bcgsc-scripts/blob/master/clusterTAS) cluster submission and management script locally at the BC Genome Sciences Centre. This will likely need modification to run on your system. Format of each line of scripts.sh is `job_name bash command`.
+Note, this was designed to create input files for [clusterTAS](https://github.com/scottdbrown/bcgsc-scripts/blob/master/clusterTAS) cluster submission and management script locally at the BC Genome Sciences Centre. This will likely need modification to run on your system. Format of each line of scripts.sh is `job_name bash_command;`.
 
 Prepare NetMHCpan invocations using the condensed proteomes. First edit lines 22-24 to paths on your system. Then run as:
 ```bash
@@ -53,8 +53,9 @@ $ python prepareJobs.py --species HUMAN --contig8mer output_directory/8mers_cont
 This breaks the input into many smaller individual jobs, depending on the proteome size.
 Example of one line of the scripts.sh file is:
 ```bash
-source /home/sbrown/bin/pythonvenv/python3/bin/activate; /path/to/netMHCpan-3.0/netMHCpan -tdir tmpdirXXXXXX -a HLA-B13:23 -l 8 -f prot8_32_HUMAN.fa > HUMAN_HLA-B13-23_8_32.pMHC; python /home/sbrown/scripts/parseNetMHCpanOutput.py HUMAN_HLA-B13-23_8_32.pMHC HUMAN_HLA-B13-23_8_32.pMHC.parsed; rm HUMAN_HLA-B13-23_8_32.pMHC;
+HUMAN_HLA-B13-23_8_32	source /home/sbrown/bin/pythonvenv/python3/bin/activate; /path/to/netMHCpan-3.0/netMHCpan -tdir tmpdirXXXXXX -a HLA-B13:23 -l 8 -f prot8_32_HUMAN.fa > HUMAN_HLA-B13-23_8_32.pMHC; python /home/sbrown/scripts/parseNetMHCpanOutput.py HUMAN_HLA-B13-23_8_32.pMHC HUMAN_HLA-B13-23_8_32.pMHC.parsed; rm HUMAN_HLA-B13-23_8_32.pMHC;
 ```
+Note, since the HLA is in the file name, and the prot8_32_HUMAN.fa is the lest of peptides, this is parsed down to just be the IC50 scores for each peptide (in the same order as prot8_32_HUMAN.fa) to save space.
 
 Within the folder holding the results of all the predictions, we will check to see that all jobs completed successfully, and get simple summaries
 ```bash
@@ -91,6 +92,17 @@ CREATE INDEX binder_hla_ind ON binders(hla_id);
 CREATE INDEX binder_pep_ind ON binders(pep_id);
 ```
 Note that indices need to be created manually after running `makeDatabaseOfBinders.py`.
+
+
+## Creating SQLite3 database from flat files
+
+If you are using our human immunopeptidome data (downloaded from: __________), you can generate a comparable SQLite3 database by running:
+```bash
+$ python makeDatabaseFromFlatFiles.py human_immunopeptidome_database_flat/ HUMAN_binders.db
+```
+
+Note that this requires loading all data into memory, and is quite RAM-intensive, requiring > 50GB of RAM.
+
 
 Given a list of HLA genotypes, we can calculate the size of the self-immunopeptidome
 ```bash
