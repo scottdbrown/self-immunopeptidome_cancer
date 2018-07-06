@@ -10,9 +10,14 @@ Scripts relevant to Self-immunopeptidome and Cancer manuscript
 
 ## Tasks described here
 * [Condensing proteomes](#procedure-to-condense-a-proteome)
-* [Prepare predictions](#prepare-predictions)
+* [Prepare and run predictions](#prepare-and-run-predictions)
+* [Parse the results of the predictions](#parse-the-results-of-the-predictions)
+* [Import parsed data into SQLite3 database](#import-parsed-data-into-sqlite3-database)
+* [Creating SQLite3 database from downloaded data](#creating-sqlite3-database-from-downloaded-data)
+* [Lookup self-immunopeptidome sizes from HLA genotypes](#lookup-self-immunopeptidome-sizes-from-hla-genotypes)
 * [Generating random amino acid changes](#generating-random-proteome-mutations)
 * [Getting variant RNA-seq support](#getting-variant-rna-seq-read-support)
+
 
 ## Procedure to condense a proteome
 This will condense a given proteome (.fasta(s)) into sets of artificial proteins ("contigs")
@@ -37,7 +42,7 @@ $ awk '{{print length($0);}}' output_directory/8mers_contigs.txt > output_direct
 #### Repeat for 9, 10, and 11mers
 
 
-## Prepare predictions
+## Prepare and run predictions
 
 First, get list of all HLA available for prediction in NetMHCpan
 ```bash
@@ -55,7 +60,9 @@ Example of one line of the scripts.sh file is:
 ```bash
 HUMAN_HLA-B13-23_8_32	source /home/sbrown/bin/pythonvenv/python3/bin/activate; /path/to/netMHCpan-3.0/netMHCpan -tdir tmpdirXXXXXX -a HLA-B13:23 -l 8 -f prot8_32_HUMAN.fa > HUMAN_HLA-B13-23_8_32.pMHC; python /home/sbrown/scripts/parseNetMHCpanOutput.py HUMAN_HLA-B13-23_8_32.pMHC HUMAN_HLA-B13-23_8_32.pMHC.parsed; rm HUMAN_HLA-B13-23_8_32.pMHC;
 ```
-Note, since the HLA is in the file name, and the prot8_32_HUMAN.fa is the lest of peptides, this is parsed down to just be the IC50 scores for each peptide (in the same order as prot8_32_HUMAN.fa) to save space.
+Note, since the HLA is in the file name, and the prot8_32_HUMAN.fa is the list of peptides, this is parsed down to just be the IC50 scores for each peptide (in the same order as prot8_32_HUMAN.fa) to save space.
+
+## Parse the results of the predictions
 
 Within the folder holding the results of all the predictions, we will check to see that all jobs completed successfully, and get simple summaries
 ```bash
@@ -63,6 +70,8 @@ $ python tallyParsedData_multiProc.py -v ../scripts.sh analysis_results/ singleH
 ```
 
 Make sure that failedJobs.txt is an empty file before continuing.
+
+## Import parsed data into SQLite3 database
 
 Now we will build an sqlite3 (v3.6.20) database to hold information on pMHC binding.
 ```bash
@@ -94,7 +103,7 @@ CREATE INDEX binder_pep_ind ON binders(pep_id);
 Note that indices need to be created manually after running `makeDatabaseOfBinders.py`.
 
 
-## Creating SQLite3 database from flat files
+## Creating SQLite3 database from downloaded data
 
 If you are using our human immunopeptidome data (downloaded from: __________), you can generate a comparable SQLite3 database by running:
 ```bash
@@ -103,6 +112,7 @@ $ python makeDatabaseFromFlatFiles.py human_immunopeptidome_database_flat/ HUMAN
 
 Note that this requires loading all data into memory, and is quite RAM-intensive, requiring > 50GB of RAM.
 
+## Lookup self-immunopeptidome sizes from HLA genotypes
 
 Given a list of HLA genotypes, we can calculate the size of the self-immunopeptidome
 ```bash
