@@ -105,12 +105,13 @@ Note that indices need to be created manually after running `makeDatabaseOfBinde
 
 ## Creating SQLite3 database from downloaded data
 
-If you are using our human immunopeptidome data (downloaded from: __________), you can generate a comparable SQLite3 database by running:
+Dataset DOI: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1345742.svg)](https://doi.org/10.5281/zenodo.1345742)
+If you are using our human immunopeptidome data, you can generate a comparable SQLite3 database by running:
 ```bash
 $ python makeDatabaseFromFlatFiles.py human_immunopeptidome_database_flat/ HUMAN_binders.db
 ```
 
-Note that this requires loading all data into memory, and is quite RAM-intensive, requiring > 50GB of RAM.
+Note that to avoid repeated database querying, this script loads all data into memory, and is quite RAM-intensive, requiring > 70 GB of RAM. Modifications may be necessary to run on your machine.
 
 ## Lookup self-immunopeptidome sizes from HLA genotypes
 
