@@ -105,7 +105,10 @@ Note that indices need to be created manually after running `makeDatabaseOfBinde
 
 ## Creating SQLite3 database from downloaded data
 
-Dataset DOI: [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1345742.svg)](https://doi.org/10.5281/zenodo.1345742)
+Dataset DOI:
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1345742.svg)](https://doi.org/10.5281/zenodo.1345742)
+
 If you are using our human immunopeptidome data, you can generate a comparable SQLite3 database by running:
 ```bash
 $ python makeDatabaseFromFlatFiles.py human_immunopeptidome_database_flat/ HUMAN_binders.db
