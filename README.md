@@ -107,7 +107,7 @@ Note that indices need to be created manually after running `makeDatabaseOfBinde
 
 Dataset DOI:
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1345742.svg)](https://doi.org/10.5281/zenodo.1345742)
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1453418.svg)](https://doi.org/10.5281/zenodo.1453418)
 
 If you are using our human immunopeptidome data, you can generate a comparable SQLite3 database by running:
 ```bash
