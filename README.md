@@ -1,5 +1,6 @@
 # self-immunopeptidome_cancer
-Scripts relevant to Self-immunopeptidome and Cancer manuscript
+Scripts relevant to [Neoantigen characteristics in the context of the complete predicted MHC class I self-immunopeptidome](https://www.tandfonline.com/doi/full/10.1080/2162402X.2018.1556080)
+[doi:10.1080/2162402X.2018.1556080](https://doi.org/10.1080/2162402X.2018.1556080)
 
 
 ## Environment
